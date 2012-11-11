@@ -22,7 +22,7 @@ extern "C" __declspec(dllexport) void TicTacToe()
 	register int i = 0;
 
 	ShowBoard(iBoard);
-	while(i <= 9)
+	while(i < 9)
 	{
 		ShowBoard(iBoard);
 		if(bPlayersMove)
@@ -58,6 +58,7 @@ extern "C" __declspec(dllexport) void TicTacToe()
 		}
 		++i;
 	}
+	ShowBoard(iBoard);
 	printf("\nGame over.Nobody won...");
 	_getch();
 }
@@ -68,7 +69,6 @@ bool MakePlayerMove(UI *iBoard)
 	{
 		return false;
 	}
-
 	char cKey = 0;
 CYCLE:
 	while(cKey <= 0x30 || cKey > 0x39)
@@ -159,6 +159,12 @@ bool MakePCMove(UI *iBoard, bool *bIsPcWin)
 			{
 				//inversion(all board in first 9 bits)
 				UI iTemp = ~( (*iBoard | (*iBoard >> 9) ) & 0x1FF);
+
+				if( (iTemp & 0x145) != 0) // if there are free cells in coners
+				{
+					iTemp = iTemp & 0x145;
+				}
+
 				// first empty bit
 				UI iFirstEmpty = (iTemp & (iTemp - 1) ) ^ iTemp;
 				*iBoard |= iFirstEmpty << 9;
